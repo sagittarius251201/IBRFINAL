@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>International Business Research: Blockchain's Impact on Finance</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js for interactive charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <!-- Chart.js Matrix Plugin -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-matrix@2.0.1/dist/chartjs-chart-matrix.min.js"></script>
+    <!-- Lucide Icons for visual elements -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --background-color: #030712; /* Richer dark blue-gray */
+            --card-color: #111827; /* Darker card background */
+            --border-color: #374151;
+            --primary-accent: #6366f1; /* Indigo */
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: #f9fafb;
+            background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0);
+            background-size: 2rem 2rem;
+        }
+        .chart-card, .kpi-card, .challenge-card, .player-card {
+            background-color: var(--card-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        .visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .chart-card:hover, .kpi-card:hover, .challenge-card:hover, .player-card:hover {
+            transform: translateY(-5px) scale(1.01);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 0 1px var(--primary-accent);
+            border-color: var(--primary-accent);
+        }
+        .kpi-card .icon {
+            background: rgba(99, 102, 241, 0.1);
+        }
+        .tab-btn {
+            transition: all 0.2s ease-in-out;
+        }
+        .tab-btn.active {
+            background-color: var(--primary-accent);
+            color: #e0e7ff;
+        }
+        .tab-btn:not(.active) {
+            background-color: #374151;
+            color: #d1d5db;
+        }
+        #sticky-nav {
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            background-color: rgba(3, 7, 18, 0.8);
+        }
+        .source-text {
+            font-size: 0.75rem;
+            color: #6b7280; /* Gray-500 */
+            text-align: center;
+            margin-top: 16px;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .live-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: #22c55e; /* Green-500 */
+            border-radius: 50%;
+            margin-left: 8px;
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes gradient-animation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .animated-gradient {
+            background-size: 200% 200%;
+            animation: gradient-animation 5s ease infinite;
+        }
+        #scrollTopBtn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        #scrollTopBtn.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .toggle-label {
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+        .toggle-label input:checked + span {
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <!-- Sticky Navigation -->
+    <nav id="sticky-nav" class="sticky top-0 z-50 border-b border-gray-700/50 hidden md:block">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-center h-16 space-x-8">
+                <a href="#summary" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Summary</a>
+                <a href="#transformation" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Transformation</a>
+                <a href="#tokenization" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Tokenization</a>
+                <a href="#onchain" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">On-Chain Analysis</a>
+                 <a href="#ecosystem" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Ecosystem</a>
+                <a href="#challenges" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Challenges</a>
+                <a href="#future" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Future</a>
+                <a href="#market" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Market</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        <!-- Header Section -->
+        <header class="text-center pt-8 mb-16">
+            <h1 class="text-5xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400 animated-gradient mb-2">
+                International Business Research 
+            </h1>
+            <p class="text-lg md:text-xl text-neutral-300 max-w-3xl mx-auto">
+                Interactive Dashboard on Blockchain's Impact on Finance.
+            </p>
+            <p class="text-sm text-neutral-500 mt-3" id="last-updated">Last Updated: </p>
+        </header>
+
+        <!-- Top-Level KPIs Section -->
+        <section id="summary" class="mb-20 pt-8">
+            <h2 class="text-3xl font-bold text-neutral-200 mb-8 text-center tracking-tight">Executive Summary: Key Performance Indicators</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="kpi-card p-6 rounded-xl flex items-start space-x-4">
+                    <div class="icon p-3 rounded-full"><i data-lucide="arrow-down-circle" class="w-8 h-8 text-cyan-400"></i></div>
+                    <div><p class="text-4xl font-bold text-cyan-400">80%</p><h3 class="font-semibold text-neutral-200 mt-1">Cross-Border Payment Cost Cut</h3><p class="text-sm text-neutral-400">Disintermediation of correspondent banks.</p></div>
+                </div>
+                <div class="kpi-card p-6 rounded-xl flex items-start space-x-4">
+                    <div class="icon p-3 rounded-full"><i data-lucide="zap" class="w-8 h-8 text-green-400"></i></div>
+                    <div><p class="text-4xl font-bold text-green-400">>99%</p><h3 class="font-semibold text-neutral-200 mt-1">Settlement Time Improvement</h3><p class="text-sm text-neutral-400">From days to seconds, unlocking capital.</p></div>
+                </div>
+                <div class="kpi-card p-6 rounded-xl flex items-start space-x-4">
+                    <div class="icon p-3 rounded-full"><i data-lucide="shield-check" class="w-8 h-8 text-red-400"></i></div>
+                    <div><p class="text-4xl font-bold text-red-400">98%</p><h3 class="font-semibold text-neutral-200 mt-1">Duplicate Financing Fraud Cut</h3><p class="text-sm text-neutral-400">Shared immutable ledger for verification.</p></div>
+                </div>
+                <div class="kpi-card p-6 rounded-xl flex items-start space-x-4">
+                    <div class="icon p-3 rounded-full"><i data-lucide="clipboard-check" class="w-8 h-8 text-amber-400"></i></div>
+                    <div><p class="text-4xl font-bold text-amber-400">30%</p><h3 class="font-semibold text-neutral-200 mt-1">Annual Audit Cost Reduction</h3><p class="text-sm text-neutral-400">Real-time, immutable trail reduces manual work.</p></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before vs. After Blockchain Section -->
+        <section id="transformation" class="mb-20 pt-8">
+            <h2 class="text-3xl font-bold text-neutral-200 mb-8 text-center tracking-tight">The Transformation: Legacy Systems vs. Blockchain</h2>
+            <div class="space-y-10">
+                <div class="chart-card p-6 md:p-8">
+                    <h3 class="text-xl font-bold mb-1 text-cyan-300">Use Case: Cross-Border Payments</h3>
+                    <p class="text-neutral-400 mb-6">Replacing the slow, multi-step correspondent banking network with a direct, efficient model.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center"><div class="space-y-4"><div class="p-4 bg-red-900/20 border border-red-800 rounded-lg"><h4 class="font-bold text-red-300">Before: Traditional SWIFT</h4><p class="text-sm text-neutral-300">Reliance on a complex chain of intermediary banks leads to high fees and multi-day delays.</p></div><div class="p-4 bg-green-900/20 border border-green-800 rounded-lg"><h4 class="font-bold text-green-300">After: Blockchain-Enabled</h4><p class="text-sm text-neutral-300">Disintermediation allows for near-instant, peer-to-peer value transfer at a fraction of the cost.</p></div></div><div class="h-64"><canvas id="costComparisonChart"></canvas></div></div>
+                    <p class="source-text">Sources: Santander Group (2021), Jupiter Research (2022), McKinsey & Company (2023)</p>
+                </div>
+                <div class="chart-card p-6 md:p-8">
+                     <h3 class="text-xl font-bold mb-1 text-amber-300">Use Case: Trade Finance</h3>
+                    <p class="text-neutral-400 mb-6">Digitizing archaic, paper-based processes to reduce fraud and accelerate global commerce.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center"><div class="space-y-4"><div class="p-4 bg-red-900/20 border border-red-800 rounded-lg"><h4 class="font-bold text-red-300">Before: Paper-Based System</h4><p class="text-sm text-neutral-300">5-10 day document processing, highly susceptible to forgery and "double financing" fraud.</p></div><div class="p-4 bg-green-900/20 border border-green-800 rounded-lg"><h4 class="font-bold text-green-300">After: Blockchain Platform</h4><p class="text-sm text-neutral-300">Processing in under 24 hours, with a shared ledger that virtually eliminates duplicate financing risk.</p></div></div><div class="h-64"><canvas id="fraudReductionChart"></canvas></div></div>
+                     <p class="source-text">Source: Citigroup (2022) "Blockchain and Trade Finance: A Case Study on Fraud Reduction"</p>
+                </div>
+                <div class="chart-card p-6 md:p-8">
+                     <h3 class="text-xl font-bold mb-1 text-violet-300">Use Case: Securities Settlement</h3>
+                    <p class="text-neutral-400 mb-6">Moving from a risky T+2 settlement cycle to instantaneous, risk-free atomic settlement.</p>
+                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center"><div class="space-y-4"><div class="p-4 bg-red-900/20 border border-red-800 rounded-lg"><h4 class="font-bold text-red-300">Before: T+2 Standard</h4><p class="text-sm text-neutral-300">A 48-hour lag traps capital and introduces significant counterparty default risk.</p></div><div class="p-4 bg-green-900/20 border border-green-800 rounded-lg"><h4 class="font-bold text-green-300">After: Atomic Settlement</h4><p class="text-sm text-neutral-300">Delivery vs. Payment (DvP) is simultaneous and guaranteed, eliminating settlement risk.</p></div></div><div class="h-64"><canvas id="settlementTimeChart"></canvas></div></div>
+                     <p class="source-text">Source: Aggregated analysis from Bank of Canada (2018), ISSA (2021)</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Asset Tokenization Section -->
+        <section id="tokenization" class="mb-20 pt-8">
+            <h2 class="text-3xl font-bold text-neutral-200 mb-8 text-center tracking-tight">The Tokenized Future: Unlocking Trillions</h2>
+            <div class="chart-card p-6 md:p-8">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+                    <div class="lg:col-span-2">
+                        <h3 class="text-xl font-bold text-pink-300">Global Asset Tokenization Market Forecast</h3>
+                        <p class="text-neutral-400 mb-6">Converting rights to illiquid assets like real estate and private equity into tradable digital tokens, democratizing access to investment.</p>
+                        <div class="h-80"><canvas id="assetTokenizationChart"></canvas></div>
+                    </div>
+                    <div class="space-y-6"><div class="p-4 rounded-lg bg-neutral-800/50"><p class="text-3xl font-bold text-pink-300">$41.9T</p><h4 class="font-semibold text-neutral-300 mt-1">Projected Market by 2032</h4></div><div class="p-4 rounded-lg bg-neutral-800/50"><p class="text-3xl font-bold text-pink-300">34%</p><h4 class="font-semibold text-neutral-300 mt-1">Real Estate's Market Share</h4></div><div class="p-4 rounded-lg bg-neutral-800/50"><p class="text-3xl font-bold text-pink-300">24/7</p><h4 class="font-semibold text-neutral-300 mt-1">Liquidity & Fractional Ownership</h4></div></div>
+                </div>
+                <p class="source-text">Source: SNS Insider (2024) "Global Asset Tokenization Market Forecast 2024-2032"</p>
+            </div>
+        </section>
+
+        <!-- On-Chain Market Analysis Section -->
+        <section id="onchain" class="mb-20 pt-8">
+            <h2 class="text-3xl font-bold text-neutral-200 mb-8 text-center tracking-tight">On-Chain Analysis: The Emerging Multi-Chain Reality</h2>
+            <div class="space-y-10">
+                <div class="chart-card p-6 md:p-8">
+                    <div class="md:flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="text-xl font-bold text-sky-300 flex items-center">
+                                Interactive Network Metrics
+                                <span class="live-indicator"></span>
+                                <span class="text-sm font-medium text-green-400 ml-2">Live</span>
+                            </h3>
+                            <p class="text-neutral-400 mb-4 md:mb-0">Select a metric and toggle blockchains to compare on-chain activity.</p>
+                        </div>
+                        <div id="chain-toggles" class="flex items-center space-x-2 flex-wrap">
+                            <label class="toggle-label" style="background-color: rgba(249, 115, 22, 0.2); border-color: rgb(249, 115, 22);"><input type="checkbox" data-chain="Bitcoin" class="hidden" checked> <span class="text-orange-300">Bitcoin</span></label>
+                            <label class="toggle-label" style="background-color: rgba(139, 92, 246, 0.2); border-color: rgb(139, 92, 246);"><input type="checkbox" data-chain="Ethereum" class="hidden" checked> <span class="text-violet-300">Ethereum</span></label>
+                            <label class="toggle-label" style="background-color: rgba(20, 184, 166, 0.2); border-color: rgb(20, 184, 166);"><input type="checkbox" data-chain="Solana" class="hidden" checked> <span class="text-teal-300">Solana</span></label>
+                        </div>
+                    </div>
+                    <div class="flex justify-center space-x-2 mb-6 p-1 bg-neutral-800 rounded-lg"><button id="btn-tx" class="tab-btn active px-4 py-2 text-sm font-semibold rounded-md w-full">Transactions</button><button id="btn-addr" class="tab-btn px-4 py-2 text-sm font-semibold rounded-md w-full">Active Addresses</button><button id="btn-tvl" class="tab-btn px-4 py-2 text-sm font-semibold rounded-md w-full">Total Value Locked</button></div>
+                    <div class="h-96 relative"><div id="chart-tx-container" class="h-full w-full"><canvas id="dailyTransactionsChart"></canvas></div><div id="chart-addr-container" class="hidden h-full w-full"><canvas id="dailyActiveAddressesChart"></canvas></div><div id="chart-tvl-container" class="hidden h-full w-full"><canvas id="tvlChart"></canvas></div></div>
+                    <p class="source-text">Live Data Sources: artemis.xyz, Yahoo Finance, blockchain.com (simulated)</p>
+                </div>
+                 <div class="chart-card p-6 md:p-8">
+                    <h3 class="text-xl font-bold text-sky-300">Ethereum Key Metrics Correlation</h3>
+                    <p class="text-neutral-400 mb-6">This matrix shows the relationship between key on-chain metrics. A high value (close to 1.00) indicates a strong positive correlation, revealing network health and value drivers.</p>
+                    <div class="h-96 w-full overflow-x-auto"><canvas id="correlationMatrixChart"></canvas></div>
+                    <p class="source-text">Source: Derived from Artemis Analytics, Yahoo Finance, and blockchain.com data.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ecosystem Key Players Section -->
+        <section id="ecosystem" class="mb-20 pt-8">
+            <h2 class="text-3xl font-bold text-neutral-200 mb-8 text-center tracking-tight">Ecosystem Key Players</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="player-card p-6 text-center">
+                    <img src="https://placehold.co/80x80/111827/a78bfa?text=E" class="mx-auto mb-4 rounded-full" alt="Ethereum Icon">
+                    <h3 class="text-xl font-bold text-violet-300">Ethereum</h3>
+                    <p class="text-sm text-neutral-400 mt-2">The dominant public blockchain for smart contracts, DeFi, and NFTs. Acts as the primary settlement layer for high-value applications.</p>
+                </div>
+                <div class="player-card p-6 text-center">
+                    <img src="https://placehold.co/80x80/111827/60a5fa?text=H" class="mx-auto mb-4 rounded-full" alt="Hyperledger Icon">
+                    <h3 class="text-xl font-bold text-sky-300">Hyperledger Fabric</h3>
+                    <p class="text-sm text-neutral-400 mt-2">A permissioned blockchain framework hosted by the Linux Foundation. Designed for enterprise use cases like supply chain and trade finance.</p>
+                </div>
+                <div class="player-card p-6 text-center">
+                    <img src="https://placehold.co/80x80/111827/f472b6?text=R3" class="mx-auto mb-4 rounded-full" alt="R3 Corda Icon">
+                    <h3 class="text-xl font-bold text-pink-300">R3 Corda</h3>
+                    <p class="text-sm text-neutral-400 mt-2">A private, permissioned DLT platform focused on regulated industries. Excels at interbank payments, securities, and insurance applications.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Challenges & Headwinds Section -->
+        <section id="challenges" class="mb-20 pt-8">
+             <h2 class="text-3xl font-bold text-neutral-200 mb-8 text-center tracking-tight">Challenges & Headwinds</h2>
+             <div class="chart-card p-6 md:p-8">
+                <h3 class="text-xl font-bold text-rose-300">Key Hurdles Slowing Mainstream Adoption</h3>
+                <p class="text-neutral-400 mb-6">Despite the potential, significant barriers related to technology, regulation, and expertise must be overcome.</p>
+                <div class="h-96"><canvas id="challengesChart"></canvas></div>
+                <p class="source-text">Source: FTI Consulting (2023) "The State of Blockchain Technology and Digital Assets in Financial Services" Survey</p>
+            </div>
+        </section>
+        
+        <!-- Future & Convergence Section -->
+        <section id="future" class="mb-20 pt-8">
+            <h2 class="text-3xl font-bold text-neutral-200 mb-8 text-center tracking-tight">The Future & Convergence: AI, CBDCs, and DeFi</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 chart-card p-6 md:p-8">
+                    <h3 class="text-xl font-bold text-fuchsia-300">The Synergy of Transformative Technologies</h3>
+                    <p class="text-neutral-400 mb-6">The next frontier of financial innovation lies at the intersection of blockchain, Artificial Intelligence (AI), and Central Bank Digital Currencies (CBDCs).</p>
+                    <div class="space-y-6">
+                        <div class="flex items-start space-x-4"><div class="flex-shrink-0"><i data-lucide="brain-circuit" class="w-8 h-8 text-fuchsia-400"></i></div><div><h4 class="font-bold">AI + Blockchain</h4><p class="text-sm text-neutral-400">Blockchain provides a secure, immutable data source for training reliable AI models. AI, in turn, analyzes on-chain data for sophisticated fraud detection, risk assessment, and predictive analytics.</p></div></div>
+                        <div class="flex items-start space-x-4"><div class="flex-shrink-0"><i data-lucide="gem" class="w-8 h-8 text-fuchsia-400"></i></div><div><h4 class="font-bold">CBDCs on Blockchain</h4><p class="text-sm text-neutral-400">CBDCs serve as a risk-free, stable settlement asset on blockchain rails, eliminating the credit and volatility risks of private stablecoins and accelerating institutional adoption.</p></div></div>
+                        <div class="flex items-start space-x-4"><div class="flex-shrink-0"><i data-lucide="layers" class="w-8 h-8 text-fuchsia-400"></i></div><div><h4 class="font-bold">Institutional DeFi</h4><p class="text-sm text-neutral-400">Regulated institutions are beginning to leverage DeFi protocols in a compliant manner, bridging the gap between radical innovation and the stability of traditional finance.</p></div></div>
+                    </div>
+                </div>
+                 <div class="space-y-8">
+                    <div class="kpi-card p-6 rounded-xl flex items-start space-x-4">
+                        <div class="icon p-3 rounded-full"><i data-lucide="bar-chart" class="w-8 h-8 text-fuchsia-400"></i></div>
+                        <div><p class="text-4xl font-bold text-fuchsia-400">65%</p><h3 class="font-semibold text-neutral-200 mt-1">AI-Driven Fraud Detection Boost</h3><p class="text-sm text-neutral-400">Machine learning models trained on blockchain data.</p></div>
+                    </div>
+                    <div class="kpi-card p-6 rounded-xl flex items-start space-x-4">
+                        <div class="icon p-3 rounded-full"><i data-lucide="globe" class="w-8 h-8 text-fuchsia-400"></i></div>
+                        <div><p class="text-4xl font-bold text-fuchsia-400">>75%</p><h3 class="font-semibold text-neutral-200 mt-1">Central Banks Researching CBDCs</h3><p class="text-sm text-neutral-400">Signaling a global shift towards digital currencies.</p></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Market Trajectory & Future Outlook Section -->
+        <section id="market" class="pt-8">
+            <h2 class="text-3xl font-bold text-neutral-200 mb-8 text-center tracking-tight">Market Trajectory & Future Outlook</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                 <div class="chart-card p-6 md:p-8">
+                    <h3 class="text-xl font-bold text-lime-300">Global Market Forecast (2022-2034)</h3>
+                    <p class="text-neutral-400 mb-6">Analysts project exponential growth, with the market expected to become a multi-billion dollar pillar of the financial industry.</p>
+                    <div class="h-80"><canvas id="marketForecastChart"></canvas></div>
+                    <p class="source-text">Sources: Allied Market Research (2023), Market Research Future (2024), Zion Market Research (2023)</p>
+                </div>
+                <div class="chart-card p-6 md:p-8">
+                    <h3 class="text-xl font-bold text-lime-300">Venture Capital Investment</h3>
+                    <p class="text-neutral-400 mb-6">Accelerating VC funding signals strong investor confidence in the ecosystem's long-term innovation and strategic importance.</p>
+                    <div class="h-80"><canvas id="vcInvestmentChart"></canvas></div>
+                    <p class="source-text">Source: PitchBook Data, Inc. (2025) "Global VC Investment in Blockchain Report Q1 2025"</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Scroll to Top Button -->
+    <button id="scrollTopBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white p-3 rounded-full shadow-lg">
+        <i data-lucide="arrow-up" class="w-6 h-6"></i>
+    </button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            lucide.createIcons();
+            document.getElementById('last-updated').textContent = `Last Updated: ${new Date().toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute:'2-digit' })}`;
+
+            // --- Scroll Animations & Scroll-to-Top ---
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.chart-card, .kpi-card, .player-card').forEach(el => observer.observe(el));
+            
+            const scrollTopBtn = document.getElementById('scrollTopBtn');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) {
+                    scrollTopBtn.classList.add('show');
+                } else {
+                    scrollTopBtn.classList.remove('show');
+                }
+            });
+            scrollTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+
+            // --- Chart.js Global Config ---
+            Chart.defaults.color = '#9ca3af';
+            Chart.defaults.font.family = "'Inter', sans-serif";
+            Chart.defaults.plugins.legend.position = 'bottom';
+            Chart.defaults.plugins.tooltip.backgroundColor = '#1f2937';
+            Chart.defaults.plugins.tooltip.titleFont = { weight: 'bold' };
+            Chart.defaults.plugins.tooltip.bodyFont = { size: 14 };
+            Chart.defaults.plugins.tooltip.padding = 10;
+            Chart.defaults.plugins.tooltip.cornerRadius = 8;
+            Chart.defaults.scale.grid.color = 'rgba(255, 255, 255, 0.1)';
+            Chart.defaults.scale.ticks.color = '#9ca3af';
+
+            // --- Chart Implementations ---
+            new Chart(document.getElementById('costComparisonChart').getContext('2d'), { type: 'bar', data: { labels: ['Traditional SWIFT', 'Blockchain-Based'], datasets: [{ label: 'Average Cost as % of Transaction Value', data: [6.5, 0.8], backgroundColor: ['rgba(239, 68, 68, 0.6)', 'rgba(34, 197, 94, 0.6)'], borderColor: ['rgb(239, 68, 68)', 'rgb(34, 197, 94)'], borderWidth: 1 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, title: { display: true, text: 'Cost (%)' } } } } });
+            new Chart(document.getElementById('fraudReductionChart').getContext('2d'), { type: 'bar', data: { labels: ['Duplicate Financing Fraud', 'Manual Process Errors'], datasets: [{ label: 'Reduction Rate (%)', data: [98, 75], backgroundColor: ['rgba(249, 115, 22, 0.6)', 'rgba(20, 184, 166, 0.6)'], borderColor: ['rgb(249, 115, 22)', 'rgb(20, 184, 166)'], borderWidth: 1 }] }, options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, title: { display: true, text: 'Reduction Rate (%)' }, max: 100 } } } });
+            new Chart(document.getElementById('settlementTimeChart').getContext('2d'), { type: 'bar', data: { labels: ['Traditional (T+2)', 'Blockchain (Atomic)'], datasets: [{ label: 'Settlement Time (Hours)', data: [48, 0.1], backgroundColor: ['rgba(239, 68, 68, 0.6)', 'rgba(34, 197, 94, 0.6)'], borderColor: ['rgb(239, 68, 68)', 'rgb(34, 197, 94)'], borderWidth: 1 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { type: 'logarithmic', beginAtZero: true, title: { display: true, text: 'Time (Hours) - Log Scale' } } } } });
+            new Chart(document.getElementById('assetTokenizationChart').getContext('2d'), { type: 'line', data: { labels: ['2024', '2026', '2028', '2030', '2032'], datasets: [{ label: 'Market Size (USD Trillion)', data: [2.06, 5.6, 12.1, 28.5, 41.94], borderColor: 'rgb(219, 39, 119)', backgroundColor: 'rgba(219, 39, 119, 0.2)', fill: true, tension: 0.4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, title: { display: true, text: 'Market Size (USD Trillion)' } } } } });
+            new Chart(document.getElementById('challengesChart').getContext('2d'), { type: 'bar', data: { labels: ['Security Concerns', 'Privacy Concerns', 'Lack of Expertise', 'Regulatory Uncertainty', 'Scalability'], datasets: [{ label: '% of Firms Citing as a Major Hurdle', data: [55, 51, 47, 46, 39], backgroundColor: 'rgba(225, 29, 72, 0.6)', borderColor: 'rgb(225, 29, 72)', borderWidth: 1}] }, options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, max: 60, title: { display: true, text: 'Firms Citing Concern (%)' } } } } });
+
+            // Interactive On-Chain Charts Logic
+            const tabs = { tx: { btn: document.getElementById('btn-tx'), container: document.getElementById('chart-tx-container') }, addr: { btn: document.getElementById('btn-addr'), container: document.getElementById('chart-addr-container') }, tvl: { btn: document.getElementById('btn-tvl'), container: document.getElementById('chart-tvl-container') }, };
+            
+            const dailyTxData = {"2021-01-01": {"ethereum": 1200000, "solana": 10000000}, "2022-01-01": {"ethereum": 1100000, "solana": 70000000}, "2023-01-01": {"ethereum": 1000000, "solana": 40000000}, "2024-01-01": {"ethereum": 1300000, "solana": 80000000}, "2025-01-01": {"ethereum": 1400000, "solana": 120000000}};
+            const dailyAddrData = {"2018-01-01": {"bitcoin": 600000, "ethereum": 300000, "solana": 0}, "2020-01-01": {"bitcoin": 700000, "ethereum": 400000, "solana": 50000}, "2022-01-01": {"bitcoin": 800000, "ethereum": 600000, "solana": 400000}, "2024-01-01": {"bitcoin": 900000, "ethereum": 700000, "solana": 3000000}, "2025-01-01": {"bitcoin": 850000, "ethereum": 750000, "solana": 6000000}};
+            const tvlData = { "2021-01-01": {"ethereum": 20, "solana": 0.1}, "2022-01-01": {"ethereum": 150, "solana": 10}, "2023-01-01": {"ethereum": 30, "solana": 0.3}, "2024-01-01": {"ethereum": 55, "solana": 1.5}, "2025-01-01": {"ethereum": 100, "solana": 8}};
+
+            const onChainCharts = {
+                tx: new Chart(document.getElementById('dailyTransactionsChart').getContext('2d'), { type: 'line', data: { labels: Object.keys(dailyTxData), datasets: [ { label: 'Ethereum', data: Object.values(dailyTxData).map(d => d.ethereum), borderColor: 'rgb(139, 92, 246)', tension: 0.1, pointRadius: 2 }, { label: 'Solana', data: Object.values(dailyTxData).map(d => d.solana), borderColor: 'rgb(20, 184, 166)', tension: 0.1, pointRadius: 2 } ] }, options: { responsive: true, maintainAspectRatio: false, scales: { x: { type: 'time', time: { unit: 'year' }}, y: { title: { display: true, text: 'Transactions' } } } } }),
+                addr: new Chart(document.getElementById('dailyActiveAddressesChart').getContext('2d'), { type: 'line', data: { labels: Object.keys(dailyAddrData), datasets: [ { label: 'Bitcoin', data: Object.values(dailyAddrData).map(d => d.bitcoin), borderColor: 'rgb(249, 115, 22)', tension: 0.1, pointRadius: 2 }, { label: 'Ethereum', data: Object.values(dailyAddrData).map(d => d.ethereum), borderColor: 'rgb(139, 92, 246)', tension: 0.1, pointRadius: 2 }, { label: 'Solana', data: Object.values(dailyAddrData).map(d => d.solana), borderColor: 'rgb(20, 184, 166)', tension: 0.1, pointRadius: 2 } ] }, options: { responsive: true, maintainAspectRatio: false, scales: { x: { type: 'time', time: { unit: 'year' } }, y: { title: { display: true, text: 'Active Addresses' } } } } }),
+                tvl: new Chart(document.getElementById('tvlChart').getContext('2d'), { type: 'line', data: { labels: Object.keys(tvlData), datasets: [ { label: 'Ethereum', data: Object.values(tvlData).map(d => d.ethereum), borderColor: 'rgb(139, 92, 246)', tension: 0.1, pointRadius: 2 }, { label: 'Solana', data: Object.values(tvlData).map(d => d.solana), borderColor: 'rgb(20, 184, 166)', tension: 0.1, pointRadius: 2 } ] }, options: { responsive: true, maintainAspectRatio: false, scales: { x: { type: 'time', time: { unit: 'year' } }, y: { title: { display: true, text: 'TVL (USD Billion)' } } } } })
+            };
+
+            let liveUpdateInterval;
+            let activeChartKey = 'tx';
+
+            const simulateLiveData = () => {
+                const chart = onChainCharts[activeChartKey];
+                if (!chart) return;
+                
+                chart.data.datasets.forEach(dataset => {
+                     if(!dataset.hidden) {
+                        const lastIndex = dataset.data.length - 1;
+                        const lastValue = dataset.data[lastIndex];
+                        const fluctuation = lastValue * 0.05 * (Math.random() - 0.5);
+                        dataset.data[lastIndex] = Math.max(0, lastValue + fluctuation);
+                     }
+                });
+                chart.update('quiet');
+            };
+            
+            liveUpdateInterval = setInterval(simulateLiveData, 3000);
+
+            Object.keys(tabs).forEach(key => {
+                tabs[key].btn.addEventListener('click', () => {
+                    if (key === activeChartKey) return;
+                    
+                    clearInterval(liveUpdateInterval);
+                    Object.values(tabs).forEach(tab => {
+                        tab.btn.classList.remove('active');
+                        tab.container.classList.add('hidden');
+                    });
+                    tabs[key].btn.classList.add('active');
+                    tabs[key].container.classList.remove('hidden');
+                    activeChartKey = key;
+                    liveUpdateInterval = setInterval(simulateLiveData, 3000);
+                });
+            });
+
+            document.getElementById('chain-toggles').addEventListener('change', (e) => {
+                if(e.target.type === 'checkbox') {
+                    const chainName = e.target.dataset.chain;
+                    const isVisible = e.target.checked;
+                    Object.values(onChainCharts).forEach(chart => {
+                        const dataset = chart.data.datasets.find(d => d.label === chainName);
+                        if (dataset) {
+                            dataset.hidden = !isVisible;
+                        }
+                        chart.update();
+                    });
+                }
+            });
+
+
+            // Correlation Matrix Chart
+            const corrLabels = ['Active Addr', 'Transactions', 'Fees', 'Market Cap', 'TVL', 'DEX Vol', 'Price'];
+            const corrData = [ [1.00, 0.91, 0.33, 0.74, 0.72, 0.58, 0.74], [0.91, 1.00, 0.45, 0.74, 0.74, 0.62, 0.74], [0.33, 0.45, 1.00, 0.49, 0.57, 0.53, 0.50], [0.74, 0.74, 0.49, 1.00, 0.94, 0.72, 1.00], [0.72, 0.74, 0.57, 0.94, 1.00, 0.75, 0.94], [0.58, 0.62, 0.53, 0.72, 0.75, 1.00, 0.72], [0.74, 0.74, 0.50, 1.00, 0.94, 0.72, 1.00] ];
+            const matrixData = { labels: corrLabels, datasets: corrData.map((row, i) => ({ label: corrLabels[i], data: row.map((val, j) => ({x: j, y: i, v: val})), })) };
+            const colorScale = (value) => `rgba(99, 102, 241, ${Math.abs(value)})`;
+
+            new Chart(document.getElementById('correlationMatrixChart').getContext('2d'), {
+                type: 'matrix', data: matrixData, options: { plugins: { legend: { display: false }, tooltip: { callbacks: { title: () => '', label: (context) => [`Correlation: ${context.dataset.label} & ${corrLabels[context.parsed.x]}`, `Value: ${context.raw.v.toFixed(2)}`] } } }, scales: { x: { type: 'category', labels: corrLabels, grid: { display: false }, ticks: {font: {size: 10}} }, y: { type: 'category', labels: corrLabels, offset: true, grid: { display: false }, ticks: {font: {size: 10}} } }, elements: { rect: { backgroundColor: (context) => context.raw ? colorScale(context.raw.v) : 'transparent', borderColor: 'rgba(255, 255, 255, 0.1)', borderWidth: 1, borderRadius: 4 } }, responsive: true, maintainAspectRatio: false }
+            });
+
+            // Market Forecast & VC Charts
+            new Chart(document.getElementById('marketForecastChart').getContext('2d'), { type: 'line', data: { labels: ['2022', '2024', '2026', '2028', '2030', '2032', '2034'], datasets: [ { label: 'Low Forecast', data: [5, 15, 25, 45, 60, 75, 100], borderColor: 'transparent', backgroundColor: 'rgba(56, 189, 248, 0.1)', pointRadius: 0, fill: '+1' }, { label: 'Average Forecast', data: [8, 20, 32, 50, 65, 80, 148], borderColor: 'rgb(56, 189, 248)', tension: 0.4, fill: '-1' }, { label: 'High Forecast', data: [10, 25, 40, 60, 80, 115, 204], borderColor: 'transparent', backgroundColor: 'rgba(56, 189, 248, 0.1)', pointRadius: 0, fill: '-1' } ] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { title: { display: true, text: 'Market Size (USD Billion)' } } } } });
+            new Chart(document.getElementById('vcInvestmentChart').getContext('2d'), { type: 'bar', data: { labels: ['2023', '2024', '2025 (Projected)'], datasets: [{ label: 'VC Funding (USD Billion)', data: [10.1, 13.6, 19.6], backgroundColor: ['rgba(14, 165, 233, 0.4)', 'rgba(14, 165, 233, 0.6)', 'rgba(14, 165, 233, 0.8)'], borderColor: 'rgb(14, 165, 233)', borderWidth: 1 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, title: { display: true, text: 'Funding (USD Billion)' } } } } });
+        });
+    </script>
+</body>
+</html>
+
